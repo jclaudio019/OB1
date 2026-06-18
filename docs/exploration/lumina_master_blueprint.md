@@ -26,7 +26,9 @@ The following index maps the extracted functional components to their logical or
 ## 2. Core Architecture & Strategy Extract
 
 ### 2.1 The Upfront Conversation & Planning Interface (Lumina Gatekeeper)
+
 Lumina OS introduces the **Gatekeeper**, a conversationally-driven upfront constraint parser. Instead of immediate execution, the Gatekeeper uses dialectic prompts to gather context:
+
 - **What are we researching?** (Topic/Entity definition)
 - **What is the strategy?** (Quantitative vs. Qualitative parameters)
 - **What are the constraints?** (Time limits, source restrictions)
@@ -34,23 +36,31 @@ Lumina OS introduces the **Gatekeeper**, a conversationally-driven upfront const
 Once gathered, the Gatekeeper generates a high-level YAML or JSON plan representing the DAG of tasks. It halts execution until a **Single User Approval Signature** (human-on-the-loop) is explicitly granted via the terminal or UI.
 
 ### 2.2 The Hybrid DAG Execution Engine
+
 Deriving from `Hermes-Agent` and `dexter-free`, Lumina employs a **Hybrid Execution Engine**:
+
 - **Macro-Planning:** The initial DAG maps out sequential and parallel dependencies (e.g., Task A: Scrape SEC filings -> Task B: Extract revenue -> Task C: Synthesize report).
 - **Dynamic Unlocking (Plan/Action/Validation):** Execution does not blindly flow from N to N+1. Task N must emit a structured output that passes an internal Validation node. If Validation fails, the node re-triggers or requests human intervention before unlocking Task N+1.
 
 ### 2.3 Dialectic & Reasoning Memory Infrastructure
+
 Abstracted from `honcho` and `Hermes L4` plugins (`integrations/hermes-agent-memory`):
+
 - Memory is not simply a vector DB dump of transcripts.
 - **Dialectic Layer:** Uses multi-pass reasoning to extract beliefs, contradictions, and stated preferences from raw input.
 - **Summary & Dream Layers:** Nightly or post-turn batch processes that distill transient conversational state into permanent, rule-based instructions (e.g., "The user prefers strictly formatted tables for financial data").
 
 ### 2.4 Financial Deep Research Skills
+
 Abstracted from `dexter-free/src/dexter/tools.py`:
+
 - Decomposes massive financial queries ("Analyze Apple's Q3 performance vs competitors") into discrete Tool Calls (e.g., `yahoo_finance_api`, `sec_edgar_fetch`).
 - Contains a rigid **Sufficiency Check**: Before returning data to the orchestrator, the tool evaluates if the fetched context actually answers the sub-query or if pagination/further fetching is required.
 
 ### 2.5 Environment & System Tools
+
 Abstracted from `OpenJarvis` and the underlying `OpenBrainAI` integrations:
+
 - Stripped of heavy UI logic.
 - Implements purely decoupled primitive interactions: file system reads/writes, bash session executions, and syntax-tree parsing.
 - Tools are injected into the agent's context strictly via a standard Model Context Protocol (MCP) server instance (`server/index.ts`).
@@ -121,4 +131,5 @@ lumina-core/
 ```
 
 ---
+
 *End of Blueprint*
